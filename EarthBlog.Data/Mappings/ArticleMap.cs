@@ -24,7 +24,8 @@ namespace EarthBlog.Data.Mappings
 				CreatedBy = "Admin Test",
 				CreatedDate = DateTime.Now,
 				IsDeleted = false,
-			},
+				UserId = Guid.Parse("66D01B81-288C-44AA-A8B1-B021D7041AF5")
+            },
 			new Article
 			{
 				Id = Guid.NewGuid(),
@@ -35,7 +36,8 @@ namespace EarthBlog.Data.Mappings
 				ImageId = Guid.Parse("3BD041F8-A798-4B61-ADC3-669191A54D9B"),
 				CreatedBy = "Admin Test",
 				CreatedDate = DateTime.Now,
-				IsDeleted = false
+				IsDeleted = false,
+				UserId = Guid.Parse("8DE8558E-A1F2-40C2-8481-770D75A8F88A")
 			}
 			
 			

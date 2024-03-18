@@ -59,7 +59,8 @@ namespace EarthBlog.Data.Mappings
                 LastName = "Cevizli",
                 PhoneNumberConfirmed = true,
                 EmailConfirmed = true,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ImageId = Guid.Parse("24760B47-F5AE-4CF6-BFEE-B17FCAB0E9F1")
             };
 
             superAdmin.PasswordHash = CreatePasswordHash(superAdmin, "123456");
@@ -76,7 +77,9 @@ namespace EarthBlog.Data.Mappings
                 LastName = "User",
                 PhoneNumberConfirmed = false,
                 EmailConfirmed = false,
-                SecurityStamp = Guid.NewGuid().ToString()
+                SecurityStamp = Guid.NewGuid().ToString(),
+                ImageId = Guid.Parse("3BD041F8-A798-4B61-ADC3-669191A54D9B")
+
             };
             admin.PasswordHash = CreatePasswordHash(admin, "123456");
             

@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EarthBlog.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240318135719_UserCreated")]
-    partial class UserCreated
+    [Migration("20240318201700_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -56,21 +56,21 @@ namespace EarthBlog.Data.Migrations
                         new
                         {
                             Id = new Guid("a50a6928-fe5b-4895-b570-ebca1fee4140"),
-                            ConcurrencyStamp = "5d5c1c23-a1ad-4ff7-8305-bf9c87340fab",
+                            ConcurrencyStamp = "b34710c8-1ea7-452c-ae62-406d83ba5d35",
                             Name = "SuperAdmin",
                             NormalizedName = "SUPERADMIN"
                         },
                         new
                         {
                             Id = new Guid("811b6955-ab4d-4c07-9887-44905e5cdd74"),
-                            ConcurrencyStamp = "61cea6e4-16fe-4751-83ff-bf637567cea0",
+                            ConcurrencyStamp = "af26c231-3274-43e5-9fe6-38e1852db01d",
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
                             Id = new Guid("b1680377-ab78-4596-9e95-05027562f714"),
-                            ConcurrencyStamp = "e4a75542-b23e-4a36-aaa5-22a4b5d8c5ff",
+                            ConcurrencyStamp = "b316a4ac-8181-4149-beab-41f3c15c26c4",
                             Name = "User",
                             NormalizedName = "USER"
                         });
@@ -124,6 +124,9 @@ namespace EarthBlog.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("ImageId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -163,6 +166,8 @@ namespace EarthBlog.Data.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ImageId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -178,18 +183,19 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("8de8558e-a1f2-40c2-8481-770d75a8f88a"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "64e816f0-5055-47ad-9c10-d4c4da2a9be0",
+                            ConcurrencyStamp = "b5436da4-97c2-4cae-83db-c3964c716505",
                             Email = "admin@gmail.com",
                             EmailConfirmed = false,
                             FirstName = "Admin",
+                            ImageId = new Guid("3bd041f8-a798-4b61-adc3-669191a54d9b"),
                             LastName = "User",
                             LockoutEnabled = false,
                             NormalizedEmail = "ADMIN@GMAIL.COM",
                             NormalizedUserName = "ADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAEL4vmLcy7I9S2okb1jBbivBdC44sY6pjgzCkk6tmShxi1COtxWW5bB0l2JzU5Pjy/g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEGG8Pnf9lcX6amqy/h+dnwSMBWdxUub5y59A4yHX1I7kAjkM89C048Su4XRmOB5U5A==",
                             PhoneNumber = "+905533566666",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "9907db32-7b58-41ac-95a5-026cf8789316",
+                            SecurityStamp = "b3ee4465-8dda-48c3-948c-cd9f64aafff7",
                             TwoFactorEnabled = false,
                             UserName = "admin@gmail.com"
                         },
@@ -197,18 +203,19 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("66d01b81-288c-44aa-a8b1-b021d7041af5"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "979b732c-3f3d-4f0c-bc8d-1e06032d3b48",
+                            ConcurrencyStamp = "39d11bb5-ca16-4024-976b-a53ce4f12169",
                             Email = "superadmin@gmail.com",
                             EmailConfirmed = true,
                             FirstName = "Burak",
+                            ImageId = new Guid("24760b47-f5ae-4cf6-bfee-b17fcab0e9f1"),
                             LastName = "Cevizli",
                             LockoutEnabled = false,
                             NormalizedEmail = "SUPERADMIN@GMAIL.COM",
                             NormalizedUserName = "SUPERADMIN@GMAIL.COM",
-                            PasswordHash = "AQAAAAIAAYagAAAAENjtLWIY+qqrrh8chNXKnic49xZ9gMcdAPdQTBptm1w9fvszlB7zPZ7meINtIFJJ1g==",
+                            PasswordHash = "AQAAAAIAAYagAAAAED3UFCb+AHVCe513WBpndD1cXZiF7wq70Kxl8Yl7z/3A3j7aHctvVn2/Sv1LOucdfg==",
                             PhoneNumber = "+905533454545",
                             PhoneNumberConfirmed = true,
-                            SecurityStamp = "6a1f5277-9ed9-4d1d-b942-31dce3767c58",
+                            SecurityStamp = "4e83aa09-6cf2-42e9-8d1d-058358a41f2a",
                             TwoFactorEnabled = false,
                             UserName = "superadmin@gmail.com"
                         });
@@ -333,7 +340,7 @@ namespace EarthBlog.Data.Migrations
                     b.Property<DateTime?>("DeletedDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<Guid>("ImageId")
+                    b.Property<Guid?>("ImageId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsDeleted")
@@ -349,6 +356,9 @@ namespace EarthBlog.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<int>("ViewCount")
                         .HasColumnType("int");
 
@@ -358,31 +368,35 @@ namespace EarthBlog.Data.Migrations
 
                     b.HasIndex("ImageId");
 
+                    b.HasIndex("UserId");
+
                     b.ToTable("Articles");
 
                     b.HasData(
                         new
                         {
-                            Id = new Guid("b99acc67-61c1-431c-b6ec-2dcaa8a05a20"),
+                            Id = new Guid("823cbd1f-6dd7-4197-9deb-503ca35e116d"),
                             CategoryId = new Guid("d8f762d7-d360-4573-a717-eacafef67266"),
                             Content = "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac justo eget leo fringilla suscipit. Nullam vitae sapien vel ligula ultrices fermentum. Phasellus sollicitudin, nisi a fermentum convallis, eros dui varius ex, sed hendrerit ligula nisi eget magna. Integer posuere nibh at sem faucibus, in accumsan quam efficitur. Vivamus nec mi nec dolor fermentum aliquam. Duis ullamcorper feugiat magna, a suscipit metus mattis nec. Quisque sed velit quis nisi convallis feugiat nec eu lacus. Proin id ipsum sit amet magna consequat aliquet. Ut viverra magna in erat laoreet, ac lacinia ipsum luctus. Nam sodales convallis aliquam. Morbi in libero urna. Fusce sed est a nulla tincidunt tempus non eu odio. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer efficitur turpis a nisi fringilla, at vestibulum lorem cursus. Suspendisse potenti. Nulla facilisi. Vivamus ac dui non odio aliquam gravida.",
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(6656),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(6923),
                             ImageId = new Guid("24760b47-f5ae-4cf6-bfee-b17fcab0e9f1"),
                             IsDeleted = false,
                             Title = "Asp.net Core Deneme Makalesi 1",
+                            UserId = new Guid("66d01b81-288c-44aa-a8b1-b021d7041af5"),
                             ViewCount = 15
                         },
                         new
                         {
-                            Id = new Guid("48407d35-45cb-4e4c-8cda-d7244a486390"),
+                            Id = new Guid("07cb104f-7ca2-4d9f-a0de-fefeea3e1347"),
                             CategoryId = new Guid("fd18e57b-2b39-4768-a1f3-2300c7c2069a"),
                             Content = "Visual Studio Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed ac justo eget leo fringilla suscipit. Nullam vitae sapien vel ligula ultrices fermentum. Phasellus sollicitudin, nisi a fermentum convallis, eros dui varius ex, sed hendrerit ligula nisi eget magna. Integer posuere nibh at sem faucibus, in accumsan quam efficitur. Vivamus nec mi nec dolor fermentum aliquam. Duis ullamcorper feugiat magna, a suscipit metus mattis nec. Quisque sed velit quis nisi convallis feugiat nec eu lacus. Proin id ipsum sit amet magna consequat aliquet. Ut viverra magna in erat laoreet, ac lacinia ipsum luctus. Nam sodales convallis aliquam. Morbi in libero urna. Fusce sed est a nulla tincidunt tempus non eu odio. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Integer efficitur turpis a nisi fringilla, at vestibulum lorem cursus. Suspendisse potenti. Nulla facilisi. Vivamus ac dui non odio aliquam gravida.",
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(6663),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(6935),
                             ImageId = new Guid("3bd041f8-a798-4b61-adc3-669191a54d9b"),
                             IsDeleted = false,
                             Title = "Visual Studio Deneme Makalesi 1",
+                            UserId = new Guid("8de8558e-a1f2-40c2-8481-770d75a8f88a"),
                             ViewCount = 15
                         });
                 });
@@ -428,7 +442,7 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("d8f762d7-d360-4573-a717-eacafef67266"),
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(7809),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(8292),
                             IsDeleted = false,
                             Name = "ASP.NET CORE"
                         },
@@ -436,7 +450,7 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("fd18e57b-2b39-4768-a1f3-2300c7c2069a"),
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(7831),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(8297),
                             IsDeleted = false,
                             Name = "Visual Studio 2024"
                         });
@@ -487,7 +501,7 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("24760b47-f5ae-4cf6-bfee-b17fcab0e9f1"),
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(8745),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(9492),
                             FileName = "images/testimage",
                             FileType = "jpg",
                             IsDeleted = false
@@ -496,7 +510,7 @@ namespace EarthBlog.Data.Migrations
                         {
                             Id = new Guid("3bd041f8-a798-4b61-adc3-669191a54d9b"),
                             CreatedBy = "Admin Test",
-                            CreatedDate = new DateTime(2024, 3, 18, 16, 57, 17, 745, DateTimeKind.Local).AddTicks(8748),
+                            CreatedDate = new DateTime(2024, 3, 18, 23, 16, 59, 618, DateTimeKind.Local).AddTicks(9497),
                             FileName = "images/vstest",
                             FileType = "png",
                             IsDeleted = false
@@ -510,6 +524,17 @@ namespace EarthBlog.Data.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("EarthBlog.Entity.Entities.AppUser", b =>
+                {
+                    b.HasOne("EarthBlog.Entity.Entities.Image", "Image")
+                        .WithMany("Users")
+                        .HasForeignKey("ImageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Image");
                 });
 
             modelBuilder.Entity("EarthBlog.Entity.Entities.AppUserClaim", b =>
@@ -564,13 +589,24 @@ namespace EarthBlog.Data.Migrations
 
                     b.HasOne("EarthBlog.Entity.Entities.Image", "Image")
                         .WithMany("Articles")
-                        .HasForeignKey("ImageId")
+                        .HasForeignKey("ImageId");
+
+                    b.HasOne("EarthBlog.Entity.Entities.AppUser", "User")
+                        .WithMany("Articles")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Category");
 
                     b.Navigation("Image");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("EarthBlog.Entity.Entities.AppUser", b =>
+                {
+                    b.Navigation("Articles");
                 });
 
             modelBuilder.Entity("EarthBlog.Entity.Entities.Category", b =>
@@ -581,6 +617,8 @@ namespace EarthBlog.Data.Migrations
             modelBuilder.Entity("EarthBlog.Entity.Entities.Image", b =>
                 {
                     b.Navigation("Articles");
+
+                    b.Navigation("Users");
                 });
 #pragma warning restore 612, 618
         }
