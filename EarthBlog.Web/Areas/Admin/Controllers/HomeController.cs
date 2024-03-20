@@ -17,7 +17,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            var articles = await articleService.GetAllArticlesAsync();
+            var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
             return View(articles);
         }
     }
