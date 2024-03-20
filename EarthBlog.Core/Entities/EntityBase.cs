@@ -8,16 +8,9 @@ namespace EarthBlog.Core.Entities
 {
 	public abstract class EntityBase : IEntityBase
 	{
-		/*
-        public EntityBase()
-        {
-            Id = Guid.NewGuid();
-			CreatedDate = DateTime.Now;
-        } 
-        */
-
+		
         public virtual Guid Id { get; set; } = Guid.NewGuid();
-		public virtual string CreatedBy { get; set; }
+		public virtual string CreatedBy { get; set; } = "Undefined";
 		public virtual string? ModifiedBy { get; set; } // Burdaki soru işareti nullable olabilme ifadesini temsil eder.
 														// Yani Direkt başta olusturulmasına gerek yoktur gibi.
 

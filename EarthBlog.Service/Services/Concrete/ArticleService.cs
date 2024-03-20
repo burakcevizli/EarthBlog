@@ -22,6 +22,22 @@ namespace EarthBlog.Service.Services.Concrete
 			this.mapper = mapper;
 		}
 
+		public async Task CreateArticleAsync(ArticleAddDto articleAddDto)
+		{
+			var userId = Guid.Parse("66D01B81-288C-44AA-A8B1-B021D7041AF5");
+
+			var article = new Article
+			{
+				Title = articleAddDto.Title,
+				Content = articleAddDto.Content,
+				CategoryId = articleAddDto.CategorId,
+				UserId = userId,
+			};
+
+			await unitOfWork.GetRepository<Article>().AddAsync(article);
+			await unitOfWork.SaveAsync();
+		}
+
 		public async Task<List<ArticleDto>> GetAllArticlesWithCategoryNonDeletedAsync()
 		{
 
@@ -30,5 +46,7 @@ namespace EarthBlog.Service.Services.Concrete
 
 			return map;
 		}
+
+
 	}
 }
