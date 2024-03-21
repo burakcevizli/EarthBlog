@@ -17,5 +17,7 @@ namespace EarthBlog.Service.Services.Abstractions
 		Task<ArticleDto> GetAllArticlesWithCategoryNonDeletedAsync(Guid articleId);
 
 		Task UpdateArticleAsync(ArticleUpdateDto articleUpdateDto);
+
+		Task SafeDeleteArticleAsync(Guid articleId);
 	}
 }
