@@ -47,6 +47,25 @@ namespace EarthBlog.Service.Services.Concrete
 			return map;
 		}
 
+		public async Task<ArticleDto> GetAllArticlesWithCategoryNonDeletedAsync(Guid articleId)
+		{
+			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleId, x => x.Category);
+			var map = mapper.Map<ArticleDto>(article);
+
+			return map;
+		}
+
+		public async Task UpdateArticleAsync(ArticleUpdateDto articleUpdateDto)
+		{
+			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleUpdateDto.Id, x => x.Category);
+
+			mapper.Map(articleUpdateDto, article);
+
+			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
+
+			await unitOfWork.SaveAsync();
+		}
+
 
 	}
 }
