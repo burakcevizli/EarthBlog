@@ -1,6 +1,10 @@
-﻿using System.Reflection;
+﻿using System.Globalization;
+using System.Reflection;
+using EarthBlog.Service.FluentValidations;
 using EarthBlog.Service.Services.Abstractions;
 using EarthBlog.Service.Services.Concrete;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -17,6 +21,13 @@ namespace EarthBlog.Service.Extensions
             services.AddScoped<ICategoryService, CategoryService>();
 
 			services.AddAutoMapper(assembly);
+
+            services.AddControllersWithViews().AddFluentValidation(opt =>
+            {
+                opt.RegisterValidatorsFromAssemblyContaining<ArticleValidator>();
+                opt.DisableDataAnnotationsValidation = true;
+                opt.ValidatorOptions.LanguageManager.Culture = new CultureInfo("tr");
+            });
 
             return services;
         }

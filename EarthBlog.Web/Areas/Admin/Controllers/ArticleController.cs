@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using EarthBlog.Entity.DTOs.Articles;
 using EarthBlog.Entity.Entities;
+using EarthBlog.Service.Extensions;
 using EarthBlog.Service.Services.Abstractions;
+using FluentValidation;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EarthBlog.Web.Areas.Admin.Controllers
@@ -12,12 +14,14 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		private readonly IArticleService articleService;
 		private readonly ICategoryService categoryService;
 		private readonly IMapper mapper;
+		private readonly IValidator<Article> validator;
 
-		public ArticleController(IArticleService articleService , ICategoryService categoryService , IMapper mapper)
+		public ArticleController(IArticleService articleService , ICategoryService categoryService , IMapper mapper,IValidator<Article> validator)
         {
 			this.articleService = articleService;
 			this.categoryService = categoryService;
 			this.mapper = mapper;
+			this.validator = validator;
 		}
         public async Task<IActionResult> Index()
 		{
@@ -35,9 +39,18 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
-			await articleService.CreateArticleAsync(articleAddDto);
-			return	RedirectToAction("Index","Article",new { Area = "Admin"});
+			var map = mapper.Map<Article>(articleAddDto);
+			var result = await validator.ValidateAsync(map);
 
+			if (result.IsValid)
+			{
+				await articleService.CreateArticleAsync(articleAddDto);
+				return RedirectToAction("Index", "Article", new { Area = "Admin" });
+			}
+			else
+			{
+				result.AddToModelState(this.ModelState);
+			}
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			return View(new ArticleAddDto { Categories = categories });
 		}
@@ -57,8 +70,18 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
 		{
-			await articleService.UpdateArticleAsync(articleUpdateDto);
 
+			var map = mapper.Map<Article>(articleUpdateDto);
+			var result = await validator.ValidateAsync(map);
+
+			if(result.IsValid)
+			{
+				await articleService.UpdateArticleAsync(articleUpdateDto);
+			}
+			else
+			{
+				result.AddToModelState(this.ModelState);
+			}
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 
 			articleUpdateDto.Categories = categories;
