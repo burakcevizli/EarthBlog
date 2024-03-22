@@ -26,13 +26,8 @@ namespace EarthBlog.Service.Services.Concrete
 		{
 			var userId = Guid.Parse("66D01B81-288C-44AA-A8B1-B021D7041AF5");
 
-			var article = new Article
-			{
-				Title = articleAddDto.Title,
-				Content = articleAddDto.Content,
-				CategoryId = articleAddDto.CategorId,
-				UserId = userId,
-			};
+			var imageId = Guid.Parse("24760B47-F5AE-4CF6-BFEE-B17FCAB0E9F1");
+			var article = new Article(articleAddDto.Title, articleAddDto.Content ,userId,articleAddDto.CategorId ,imageId);
 
 			await unitOfWork.GetRepository<Article>().AddAsync(article);
 			await unitOfWork.SaveAsync();

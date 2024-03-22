@@ -36,7 +36,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
 			await articleService.CreateArticleAsync(articleAddDto);
-			RedirectToAction("Index","Article",new { Area = "Admin"});
+			return	RedirectToAction("Index","Article",new { Area = "Admin"});
 
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
 			return View(new ArticleAddDto { Categories = categories });

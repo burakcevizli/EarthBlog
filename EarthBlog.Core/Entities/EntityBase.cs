@@ -8,7 +8,7 @@ namespace EarthBlog.Core.Entities
 {
 	public abstract class EntityBase : IEntityBase
 	{
-		
+
         public virtual Guid Id { get; set; } = Guid.NewGuid();
 		public virtual string CreatedBy { get; set; } = "Undefined";
 		public virtual string? ModifiedBy { get; set; } // Burdaki soru işareti nullable olabilme ifadesini temsil eder.
