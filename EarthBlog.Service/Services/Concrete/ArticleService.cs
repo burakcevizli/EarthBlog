@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using EarthBlog.Data.UnitOfWorks;
 using EarthBlog.Entity.DTOs.Articles;
 using EarthBlog.Entity.Entities;
+using EarthBlog.Service.Extensions;
 using EarthBlog.Service.Services.Abstractions;
+using Microsoft.AspNetCore.Http;
 
 namespace EarthBlog.Service.Services.Concrete
 {
@@ -15,19 +18,26 @@ namespace EarthBlog.Service.Services.Concrete
 	{
 		private readonly IUnitOfWork unitOfWork;
 		private readonly IMapper mapper;
+		private readonly IHttpContextAccessor httpContextAccessor;
+		private readonly ClaimsPrincipal _user;
 
-		public ArticleService(IUnitOfWork unitOfWork, IMapper mapper)
+		public ArticleService(IUnitOfWork unitOfWork, IMapper mapper , IHttpContextAccessor httpContextAccessor)
 		{
 			this.unitOfWork = unitOfWork;
 			this.mapper = mapper;
+			this.httpContextAccessor = httpContextAccessor;
+			_user = httpContextAccessor.HttpContext.User;
 		}
 
 		public async Task CreateArticleAsync(ArticleAddDto articleAddDto)
 		{
-			var userId = Guid.Parse("66D01B81-288C-44AA-A8B1-B021D7041AF5");
+			//var userId = Guid.Parse("66D01B81-288C-44AA-A8B1-B021D7041AF5");
+
+			var userId = _user.GetLoggedInUserId();
+			var userEmail =_user.GetLoggedInEmail();
 
 			var imageId = Guid.Parse("24760B47-F5AE-4CF6-BFEE-B17FCAB0E9F1");
-			var article = new Article(articleAddDto.Title, articleAddDto.Content ,userId,articleAddDto.CategorId ,imageId);
+			var article = new Article(articleAddDto.Title, articleAddDto.Content ,userId,articleAddDto.CategorId,imageId, userEmail);
 
 			await unitOfWork.GetRepository<Article>().AddAsync(article);
 			await unitOfWork.SaveAsync();
@@ -52,9 +62,14 @@ namespace EarthBlog.Service.Services.Concrete
 
 		public async Task<string> UpdateArticleAsync(ArticleUpdateDto articleUpdateDto)
 		{
+			var userEmail = _user.GetLoggedInEmail();
 			var article = await unitOfWork.GetRepository<Article>().GetAsync(x => !x.IsDeleted && x.Id == articleUpdateDto.Id, x => x.Category);
 
-			mapper.Map(articleUpdateDto, article);
+			article.Title = articleUpdateDto.Title;
+			article.Content = articleUpdateDto.Content;
+			article.CategoryId = articleUpdateDto.CategoryId;
+			article.ModifiedTime = DateTime.Now;
+			article.ModifiedBy = userEmail;
 
 			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
 
@@ -64,12 +79,13 @@ namespace EarthBlog.Service.Services.Concrete
 		}
 
 		public async Task<string> SafeDeleteArticleAsync(Guid articleId) 
-		{ 
+		{
+			var userEmail = _user.GetLoggedInEmail();
 			var article = await unitOfWork.GetRepository<Article>().GetByGuidAsync(articleId);
 
 			article.IsDeleted = true;
-
 			article.DeletedDate = DateTime.Now;
+			article.DeletedBy = userEmail;
 
 			await unitOfWork.GetRepository<Article>().UpdateAsync(article);
 

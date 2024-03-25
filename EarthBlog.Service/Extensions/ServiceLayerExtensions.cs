@@ -5,6 +5,7 @@ using EarthBlog.Service.Services.Abstractions;
 using EarthBlog.Service.Services.Concrete;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
 
@@ -19,6 +20,8 @@ namespace EarthBlog.Service.Extensions
 
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<ICategoryService, CategoryService>();
+
+            services.AddSingleton<IHttpContextAccessor , HttpContextAccessor>();
 
 			services.AddAutoMapper(assembly);
 
