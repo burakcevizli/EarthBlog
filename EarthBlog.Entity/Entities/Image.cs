@@ -1,4 +1,5 @@
 ﻿using EarthBlog.Core.Entities;
+using EarthBlog.Entity.Enums;
 
 namespace EarthBlog.Entity.Entities
 {

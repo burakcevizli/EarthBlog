@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Reflection;
 using EarthBlog.Service.FluentValidations;
+using EarthBlog.Service.Helpers.Images;
 using EarthBlog.Service.Services.Abstractions;
 using EarthBlog.Service.Services.Concrete;
 using FluentValidation;
@@ -20,7 +21,7 @@ namespace EarthBlog.Service.Extensions
 
             services.AddScoped<IArticleService, ArticleService>();
             services.AddScoped<ICategoryService, CategoryService>();
-
+            services.AddScoped<IImageHelper, ImageHelper>();
             services.AddSingleton<IHttpContextAccessor , HttpContextAccessor>();
 
 			services.AddAutoMapper(assembly);
