@@ -90,7 +90,7 @@ namespace EarthBlog.Service.Helpers.Images
 
 			DateTime dateTime = DateTime.Now;
 
-			string newFileName = $"{name}_{dateTime.Microsecond}";
+			string newFileName = $"{name}_{dateTime.Millisecond}{fileExtension}";
 
 			var path = Path.Combine($"{wwwroot}/{imgFolder}/{folderName}", newFileName);
 

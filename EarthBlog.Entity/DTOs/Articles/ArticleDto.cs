@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using EarthBlog.Entity.DTOs.Cateogories;
+using EarthBlog.Entity.Entities;
 
 namespace EarthBlog.Entity.DTOs.Articles
 {
@@ -13,6 +14,7 @@ namespace EarthBlog.Entity.DTOs.Articles
         public string Title { get; set; }
         public string Content { get; set; }
         public CategoryDto Category { get; set; }
+        public Image Image { get; set; }
         public DateTime CreatedDate { get; set; }
         public string CreatedBy { get; set; }
         public bool IsDeleted { get; set; }

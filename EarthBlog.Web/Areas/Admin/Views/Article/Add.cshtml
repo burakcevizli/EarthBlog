@@ -30,6 +30,11 @@
 							<label asp-for="Content" for="defaultFormControlInput" class="form-label ">İçerik</label>
 							<textarea asp-for="Content" type="text" class="form-control mb-3" style="min-height:300px" id="defaultFormControlInput" placeholder="Lütfen içeriğinizi giriniz." aria-describedby="defaultFormControlHelp"></textarea>
 							<span asp-validation-for="Content" class="text-danger"></span>
+						</div>
+						<div class="form-group">
+							<label asp-for="Photo" for="defaultFormControlInput" class="form-label ">Resim seçiniz</label>
+							<input asp-for="Photo" accept="image/*" type="file" class="form-control mb-3" id="defaultFormControlInput" aria-describedby="defaultFormControlHelp">
+							<span asp-validation-for="Photo" class="text-danger"></span>
 
 						</div>
 						<div class="form-group">
