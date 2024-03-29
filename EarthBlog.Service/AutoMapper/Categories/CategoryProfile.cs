@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
+using EarthBlog.Entity.DTOs.Categories;
 using EarthBlog.Entity.DTOs.Cateogories;
 using EarthBlog.Entity.Entities;
 
@@ -14,6 +15,8 @@ namespace EarthBlog.Service.AutoMapper.Categories
         public CategoryProfile()
         {
             CreateMap<CategoryDto, Category>().ReverseMap();
-        }
+            CreateMap<CategoryAddDto,Category>().ReverseMap();
+            CreateMap<CategoryUpdateDto,Category>().ReverseMap();
+		}
     }
 }
