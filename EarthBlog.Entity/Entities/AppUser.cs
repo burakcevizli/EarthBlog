@@ -11,8 +11,9 @@ namespace EarthBlog.Entity.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public Guid ImageId { get; set; }
-        public Image Image { get; set; }
+        public Guid ImageId { get; set; } = Guid.Parse("24760B47-F5AE-4CF6-BFEE-B17FCAB0E9F1");
+
+		public Image Image { get; set; }
         public ICollection<Article> Articles { get; set; }
     }
 }
