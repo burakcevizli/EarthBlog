@@ -50,10 +50,10 @@
 							<th>@(user.EmailConfirmed ? "Doğrulanmış" : "Doğrulanmamış")</th>
 							<th>@user.AccessFailedCount</th>
 							<td>
-								<a class="btn btn-primary btn-sm" data-id="@user.Id" asp-area="Admin" asp-controller="User" asp-action="Update" asp-route-user="@user.Id">
+								<a class="btn btn-primary btn-sm" data-id="@user.Id" asp-area="Admin" asp-controller="User" asp-action="Update" asp-route-userId="@user.Id">
 									<i class="bx bxs-edit"></i>
 								</a>
-								<a class="btn btn-danger btn-sm" data-id="@user.Id" asp-area="Admin" asp-controller="User" asp-action="Delete" asp-route-user="@user.Id">
+								<a class="btn btn-danger btn-sm" data-id="@user.Id" asp-area="Admin" asp-controller="User" asp-action="Delete" asp-route-userId="@user.Id">
 									<i class="bx bx-minus-circle"></i>
 								</a>
 							</td>
