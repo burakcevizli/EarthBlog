@@ -11,6 +11,7 @@ namespace EarthBlog.Service.Services.Abstractions
 	public interface IArticleService
 	{
 		Task<List<ArticleDto>> GetAllArticlesWithCategoryNonDeletedAsync();
+		Task<List<ArticleDto>> GetAllArticlesWithCategoryDeletedAsync();
 
 		Task CreateArticleAsync(ArticleAddDto articleAddDto);
 
@@ -19,5 +20,6 @@ namespace EarthBlog.Service.Services.Abstractions
 		Task<string> UpdateArticleAsync(ArticleUpdateDto articleUpdateDto);
 
 		Task<string> SafeDeleteArticleAsync(Guid articleId);
+		Task<string> UndoDeleteArticleAsync(Guid articleId);
 	}
 }
