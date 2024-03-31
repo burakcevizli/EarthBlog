@@ -2,6 +2,7 @@ using System.Reflection;
 using EarthBlog.Data.Context;
 using EarthBlog.Data.Extensions;
 using EarthBlog.Entity.Entities;
+using EarthBlog.Service.Describers;
 using EarthBlog.Service.Extensions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -27,6 +28,7 @@ builder.Services.AddIdentity<AppUser, AppRole>(opt =>
     opt.Password.RequireUppercase = false;
 })
     .AddRoleManager<RoleManager<AppRole>>()
+    .AddErrorDescriber<CustomIdentityErrorDescriber>()
     .AddEntityFrameworkStores<AppDbContext>()
     .AddDefaultTokenProviders();
 

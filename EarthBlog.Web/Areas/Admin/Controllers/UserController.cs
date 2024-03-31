@@ -3,7 +3,9 @@ using AutoMapper;
 using EarthBlog.Entity.DTOs.Articles;
 using EarthBlog.Entity.DTOs.Users;
 using EarthBlog.Entity.Entities;
+using EarthBlog.Service.Extensions;
 using EarthBlog.Web.ResultMessages;
+using FluentValidation;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,13 +18,15 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 	{
 		private readonly UserManager<AppUser> userManager;
 		private readonly RoleManager<AppRole> roleManager;
+		private readonly IValidator<AppUser> validator;
 		private readonly IMapper mapper;
 		private readonly IToastNotification toastNotification;
 
-		public UserController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IMapper mapper, IToastNotification toastNotification)
+		public UserController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IValidator<AppUser> validator, IMapper mapper, IToastNotification toastNotification)
 		{
 			this.userManager = userManager;
 			this.roleManager = roleManager;
+			this.validator = validator;
 			this.mapper = mapper;
 			this.toastNotification = toastNotification;
 		}
@@ -49,6 +53,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		public async Task<IActionResult> Add(UserAddDto userAddDto)
 		{
 			var map = mapper.Map<AppUser>(userAddDto);
+			var validation = await validator.ValidateAsync(map);
 			var roles = await roleManager.Roles.ToListAsync();
 
 			if (ModelState.IsValid)
@@ -64,8 +69,9 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 				}
 				else
 				{
-					foreach (var errors in result.Errors)
-						ModelState.AddModelError("", errors.Description);
+					
+					result.AddToIdentityModelState(this.ModelState);
+					validation.AddToModelState(this.ModelState);
 					return View(new UserAddDto { Roles = roles });
 
 				}
@@ -87,31 +93,42 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		public async Task<IActionResult> Update(UserUpdateDto userUpdateDto)
 		{
 			var user = await userManager.FindByIdAsync(userUpdateDto.Id.ToString());
+
 			if (user != null)
 			{
 				var userRole = string.Join("", await userManager.GetRolesAsync(user));
 				var roles = await roleManager.Roles.ToListAsync();
 				if (ModelState.IsValid)
 				{
-					mapper.Map(userUpdateDto, user);
-					user.UserName = userUpdateDto.Email;
-					user.SecurityStamp = Guid.NewGuid().ToString();
-					var result = await userManager.UpdateAsync(user);
-					if (result.Succeeded)
+					var map = mapper.Map(userUpdateDto, user);
+					var validation = await validator.ValidateAsync(map);
+					if (validation.IsValid)
 					{
-						await userManager.RemoveFromRoleAsync(user, userRole);
-						var findRole = await roleManager.FindByIdAsync(userUpdateDto.RoleId.ToString());
-						await userManager.AddToRoleAsync(user, findRole.Name);
-						toastNotification.AddSuccessToastMessage(Messages.User.Update(userUpdateDto.Email), new ToastrOptions { Title = "İşlem Başarılı" });
-						return RedirectToAction("Index", "User", new { Area = "Admin" });
+						user.UserName = userUpdateDto.Email;
+						user.SecurityStamp = Guid.NewGuid().ToString();
+						var result = await userManager.UpdateAsync(user);
+						if (result.Succeeded)
+						{
+							await userManager.RemoveFromRoleAsync(user, userRole);
+							var findRole = await roleManager.FindByIdAsync(userUpdateDto.RoleId.ToString());
+							await userManager.AddToRoleAsync(user, findRole.Name);
+							toastNotification.AddSuccessToastMessage(Messages.User.Update(userUpdateDto.Email), new ToastrOptions { Title = "İşlem Başarılı" });
+							return RedirectToAction("Index", "User", new { Area = "Admin" });
+						}
+						else
+						{
+							result.AddToIdentityModelState(this.ModelState);
+							return View(new UserUpdateDto { Roles = roles });
+
+
+						}
 					}
 					else
 					{
-						foreach (var errors in result.Errors)
-							ModelState.AddModelError("", errors.Description);
+						validation.AddToModelState(this.ModelState);
 						return View(new UserUpdateDto { Roles = roles });
-
 					}
+
 				}
 			}
 			return NotFound();
@@ -129,8 +146,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			}
 			else
 			{
-				foreach (var errors in result.Errors)
-					ModelState.AddModelError("", errors.Description);
+				result.AddToIdentityModelState(this.ModelState);
 			}
 			return NotFound();
 		}
