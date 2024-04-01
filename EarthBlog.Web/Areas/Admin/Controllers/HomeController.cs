@@ -1,5 +1,7 @@
-﻿using EarthBlog.Service.Services.Abstractions;
+﻿using EarthBlog.Entity.Entities;
+using EarthBlog.Service.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace EarthBlog.Web.Areas.Admin.Controllers

@@ -3,6 +3,7 @@ using EarthBlog.Entity.DTOs.Articles;
 using EarthBlog.Entity.Entities;
 using EarthBlog.Service.Extensions;
 using EarthBlog.Service.Services.Abstractions;
+using EarthBlog.Web.Const;
 using EarthBlog.Web.ResultMessages;
 using FluentValidation;
 using Microsoft.AspNetCore.Authorization;
@@ -29,14 +30,14 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			this.toastNotification = toastNotification;
 		}
 		[HttpGet]
-		[Authorize(Roles ="SuperAdmin , Admin , User")]
+		[Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin} , {RoleConsts.User}" )]
         public async Task<IActionResult> Index()
 		{
 			var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
 			return View(articles);
 		}
 		[HttpGet]
-        [Authorize(Roles = "SuperAdmin , Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> DeletedArticle()
 		{
@@ -44,7 +45,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			return View(articles);
 		}
 		[HttpGet]
-        [Authorize(Roles = "SuperAdmin , Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> Add()
 		{
@@ -53,7 +54,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
-        [Authorize(Roles = "SuperAdmin , Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
@@ -75,7 +76,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
-        [Authorize(Roles = "SuperAdmin , Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> Update(Guid articleId)
 		{
@@ -89,7 +90,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
-        [Authorize(Roles = "SuperAdmin , Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
 		{
@@ -114,7 +115,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			return View(articleUpdateDto);
 		}
 
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
         public async Task<IActionResult> Delete(Guid articleId)
 		{
 
@@ -124,7 +125,7 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 
 			return RedirectToAction("Index","Article",new {Area = "Admin"});
 		}
-        [Authorize(Roles = "SuperAdmin,Admin")]
+        [Authorize(Roles = $"{RoleConsts.Superadmin} , {RoleConsts.Admin}")]
 
         public async Task<IActionResult> UndoDelete(Guid articleId)
 		{
