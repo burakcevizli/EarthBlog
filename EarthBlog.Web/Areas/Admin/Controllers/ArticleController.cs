@@ -5,6 +5,7 @@ using EarthBlog.Service.Extensions;
 using EarthBlog.Service.Services.Abstractions;
 using EarthBlog.Web.ResultMessages;
 using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NToastNotify;
 
@@ -28,26 +29,33 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			this.toastNotification = toastNotification;
 		}
 		[HttpGet]
+		[Authorize(Roles ="SuperAdmin , Admin , User")]
         public async Task<IActionResult> Index()
 		{
 			var articles = await articleService.GetAllArticlesWithCategoryNonDeletedAsync();
 			return View(articles);
 		}
 		[HttpGet]
-		public async Task<IActionResult> DeletedArticle()
+        [Authorize(Roles = "SuperAdmin , Admin")]
+
+        public async Task<IActionResult> DeletedArticle()
 		{
 			var articles = await articleService.GetAllArticlesWithCategoryDeletedAsync();
 			return View(articles);
 		}
 		[HttpGet]
-		public async Task<IActionResult> Add()
+        [Authorize(Roles = "SuperAdmin , Admin")]
+
+        public async Task<IActionResult> Add()
 		{
 			var categories = await categoryService.GetAllCategoriesNonDeleted(); 
 			return View(new ArticleAddDto { Categories = categories});
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
+        [Authorize(Roles = "SuperAdmin , Admin")]
+
+        public async Task<IActionResult> Add(ArticleAddDto articleAddDto)
 		{
 			var map = mapper.Map<Article>(articleAddDto);
 			var result = await validator.ValidateAsync(map);
@@ -67,7 +75,9 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> Update(Guid articleId)
+        [Authorize(Roles = "SuperAdmin , Admin")]
+
+        public async Task<IActionResult> Update(Guid articleId)
 		{
 			var article = await articleService.GetAllArticlesWithCategoryNonDeletedAsync(articleId);
 			var categories = await categoryService.GetAllCategoriesNonDeleted();
@@ -79,7 +89,9 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
+        [Authorize(Roles = "SuperAdmin , Admin")]
+
+        public async Task<IActionResult> Update(ArticleUpdateDto articleUpdateDto)
 		{
 
 			var map = mapper.Map<Article>(articleUpdateDto);
@@ -102,8 +114,8 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			return View(articleUpdateDto);
 		}
 
-			
-		public async Task<IActionResult> Delete(Guid articleId)
+        [Authorize(Roles = "SuperAdmin,Admin")]
+        public async Task<IActionResult> Delete(Guid articleId)
 		{
 
 			var title = await articleService.SafeDeleteArticleAsync(articleId);
@@ -112,7 +124,9 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 
 			return RedirectToAction("Index","Article",new {Area = "Admin"});
 		}
-		public async Task<IActionResult> UndoDelete(Guid articleId)
+        [Authorize(Roles = "SuperAdmin,Admin")]
+
+        public async Task<IActionResult> UndoDelete(Guid articleId)
 		{
 
 			var title = await articleService.UndoDeleteArticleAsync(articleId);
