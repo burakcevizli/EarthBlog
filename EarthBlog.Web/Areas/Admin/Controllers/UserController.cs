@@ -1,9 +1,12 @@
 ﻿using System.Data;
 using AutoMapper;
+using EarthBlog.Data.UnitOfWorks;
 using EarthBlog.Entity.DTOs.Articles;
 using EarthBlog.Entity.DTOs.Users;
 using EarthBlog.Entity.Entities;
+using EarthBlog.Entity.Enums;
 using EarthBlog.Service.Extensions;
+using EarthBlog.Service.Helpers.Images;
 using EarthBlog.Web.ResultMessages;
 using FluentValidation;
 using Microsoft.AspNetCore.Identity;
@@ -17,16 +20,22 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 	public class UserController : Controller
 	{
 		private readonly UserManager<AppUser> userManager;
-		private readonly RoleManager<AppRole> roleManager;
-		private readonly IValidator<AppUser> validator;
+        private readonly IUnitOfWork unitOfWork;
+        private readonly IImageHelper imageHelper;
+        private readonly RoleManager<AppRole> roleManager;
+        private readonly SignInManager<AppUser> signInManager;
+        private readonly IValidator<AppUser> validator;
 		private readonly IMapper mapper;
 		private readonly IToastNotification toastNotification;
 
-		public UserController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager, IValidator<AppUser> validator, IMapper mapper, IToastNotification toastNotification)
+		public UserController(UserManager<AppUser> userManager,IUnitOfWork unitOfWork,IImageHelper imageHelper ,RoleManager<AppRole> roleManager,SignInManager<AppUser> signInManager ,IValidator<AppUser> validator, IMapper mapper, IToastNotification toastNotification)
 		{
 			this.userManager = userManager;
-			this.roleManager = roleManager;
-			this.validator = validator;
+            this.unitOfWork = unitOfWork;
+            this.imageHelper = imageHelper;
+            this.roleManager = roleManager;
+            this.signInManager = signInManager;
+            this.validator = validator;
 			this.mapper = mapper;
 			this.toastNotification = toastNotification;
 		}
@@ -150,5 +159,79 @@ namespace EarthBlog.Web.Areas.Admin.Controllers
 			}
 			return NotFound();
 		}
-	}
+		[HttpGet]
+		public async Task<IActionResult> Profile()
+		{
+			var user = await userManager.GetUserAsync(HttpContext.User);
+			var getImage = await unitOfWork.GetRepository<AppUser>().GetAsync(x=>x.Id == user.Id , x=>x.Image);
+			var map = mapper.Map<UserProfileDto>(user);
+			map.Image.FileName = getImage.Image.FileName;
+
+			return View(map);
+		}
+        [HttpPost]
+        public async Task<IActionResult> Profile(UserProfileDto userProfileDto)
+        {
+            var user = await userManager.GetUserAsync(HttpContext.User);
+
+            if (ModelState.IsValid)
+			{
+				var isVerified = await userManager.CheckPasswordAsync(user, userProfileDto.CurrentPassword);
+				if(isVerified && userProfileDto.NewPassword != null && userProfileDto.Photo != null)
+				{
+					var result = await userManager.ChangePasswordAsync(user, userProfileDto.CurrentPassword, userProfileDto.NewPassword);
+					if (result.Succeeded)
+					{
+						await userManager.UpdateSecurityStampAsync(user);
+						await signInManager.SignOutAsync();
+						await signInManager.PasswordSignInAsync(user,userProfileDto.NewPassword,true,false);
+
+						user.FirstName = userProfileDto.FirstName;
+                        user.LastName = userProfileDto.LastName;
+                        user.PhoneNumber = userProfileDto.PhoneNumber;
+
+
+                        var imageUpload = await imageHelper.Upload($"{userProfileDto.FirstName}{userProfileDto.LastName}", userProfileDto.Photo, ImageType.User);
+                        Image image = new(imageUpload.FullName, userProfileDto.Photo.ContentType, user.Email);
+                        await unitOfWork.GetRepository<Image>().AddAsync(image);
+
+						user.ImageId = image.Id;
+
+                        await userManager.UpdateAsync(user);
+
+						await unitOfWork.SaveAsync();
+
+						toastNotification.AddSuccessToastMessage("Şifreniz ve Bilgileriniz Başarıyla Değiştirilmiştir.");
+						return View();
+					}
+					else
+						result.AddToIdentityModelState(ModelState); return View();
+					
+				}
+				else if (isVerified && userProfileDto.Photo != null)
+				{
+					await userManager.UpdateSecurityStampAsync(user);
+                    user.FirstName = userProfileDto.FirstName;
+                    user.LastName = userProfileDto.LastName;
+                    user.PhoneNumber = userProfileDto.PhoneNumber;
+
+                    var imageUpload = await imageHelper.Upload($"{userProfileDto.FirstName}{userProfileDto.LastName}", userProfileDto.Photo, ImageType.User);
+                    Image image = new(imageUpload.FullName, userProfileDto.Photo.ContentType, user.Email);
+                    await unitOfWork.GetRepository<Image>().AddAsync(image);
+
+                    user.ImageId = image.Id;
+
+                    await userManager.UpdateAsync(user);
+                    await unitOfWork.SaveAsync();
+
+                    toastNotification.AddSuccessToastMessage("Bilgileriniz Başarıyla Değiştirilmiştir.");
+					return View();
+                }
+				else
+                    toastNotification.AddErrorToastMessage("Bilgileriniz Güncellenirken Bir Hata Oluştur."); return View();
+            }
+
+            return View();
+        }
+    }
 }
